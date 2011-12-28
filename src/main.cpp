@@ -1,6 +1,5 @@
 // Draw the "dot plots" of a function
 //P52 in <Computer Graphics Using OpenGL(Second Edition)>
-
 #include<math.h>
 #include<GL/glut.h>
 #include<iostream>
@@ -9,6 +8,21 @@ using namespace std;
 
 const int screenWidth = 640; // width of screen window in pixels
 const int screenHeight = 480; // height of screen window in pixels
+
+//视角
+struct LookAt {
+	GLfloat ex;
+	GLfloat ey;
+	GLfloat ez;
+	GLfloat cx;
+	GLfloat cy;
+	GLfloat cz;
+	GLfloat ux;
+	GLfloat uy;
+	GLfloat uz;
+};
+
+LookAt lookAt = { 0.3, 0.3, 0.3, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0 };
 
 //声明一个用于存放绘制6面体的结构体
 struct Gl3DRect {
@@ -125,19 +139,40 @@ Gl3DRect create3DRectPoints(GLfloat startPoint[3], GLfloat xLength,
 	return rect;
 }
 
-void draw(void) {
-	cout << "draw" << endl;
-	glClearColor(0.0, 0.0, 0.0, 0.0);
-	glClear(GL_COLOR_BUFFER_BIT);
-	Gl3DRect rect = create3DRectPoints(new GLfloat[3] { 0.0, 0.0, 0.0 }, 0.2,
-			0.2, 0.2);
-	rect.facadeColor[0] = 0.58f;
-	rect.facadeColor[1] = 0.16f;
-	rect.facadeColor[2] = 0.84f;
+void drawPointRect(GLfloat color[]) {
+	glColor3fv(color);
+	glBegin(GL_LINES);
+	glVertex3fv((GLfloat[]) {-100.0, 0.0, 0.0});
+	glVertex3fv((GLfloat[]) {100.0, 0.0, 0.0});
+	glEnd();
+	glBegin(GL_LINES);
+	glVertex3fv((GLfloat[]) {0.0, -100.0, 0.0});
+	glVertex3fv((GLfloat[]) {0.0, 100.0, 0.0});
+	glEnd();
+	glBegin(GL_LINES);
+	glVertex3fv((GLfloat[]) {0.0, 0.0, -100.0});
+	glVertex3fv((GLfloat[]) {0.0, 0.0, 100.0});
+	glEnd();
 
-	rect.backFacadeColor[0] = 1.98f;
-	rect.backFacadeColor[1] = 0.2f;
-	rect.backFacadeColor[2] = 0.5f;
+}
+
+void draw(void) {
+	glLoadIdentity();
+	glMatrixMode(GL_MODELVIEW);
+	gluPerspective(0.0, 1.0, 0.0, 1.0);
+	gluLookAt(lookAt.ex, lookAt.ey, lookAt.ez, lookAt.cx, lookAt.cy, lookAt.cz,
+			lookAt.ux, lookAt.uy, lookAt.uz);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	GLfloat startPoints[] = { -0.1, -0.1, -0.1 };
+	Gl3DRect rect = create3DRectPoints(startPoints, 0.2, 0.2, 0.2);
+	rect.facadeColor[0] = 1.0f;
+	rect.facadeColor[1] = 1.0f;
+	rect.facadeColor[2] = 1.0f;
+
+	rect.backFacadeColor[0] = 1.0f;
+	rect.backFacadeColor[1] = 1.0f;
+	rect.backFacadeColor[2] = 1.0f;
 
 	rect.leftColor[0] = 0.1f;
 	rect.leftColor[1] = 0.9f;
@@ -150,32 +185,74 @@ void draw(void) {
 	rect.topColor[0] = 0.1f;
 	rect.topColor[1] = 0.2f;
 	rect.topColor[2] = 0.56f;
-	draw3DRect(rect);
-	glutSwapBuffers();
-}
 
-void init(int width, int height) {
-	glViewport(0, 0, width, height);
-	gluPerspective(45.0, width / height, 1.0, 0.0);
-	gluLookAt(0.4, 0.4, 0.4, 0.2, 0.2, 0.2, 0.0, 0.2, 0.0);
+	rect.bottomColor[0] = 0.1f;
+	rect.bottomColor[1] = 0.2f;
+	rect.bottomColor[2] = 0.56f;
+	draw3DRect(rect);
+	drawPointRect((GLfloat[]) {0.3,0.3,0.3});
+	glutSwapBuffers();
+//	glFlush();
 }
 
 void windowResize(int width, int height) {
-	cout << "event{window resize:" << width << "x" << height << "}" << endl;
-	init(width, height);
+	glViewport(0, 0, width, height);
+}
+
+void keyPressed(int key, int x, int y) {
+	if (key == GLUT_KEY_LEFT) {
+		lookAt.ex = lookAt.ex - 0.01;
+	} else if (key == GLUT_KEY_RIGHT) {
+		lookAt.ex = lookAt.ex + 0.01;
+	} else if (key == GLUT_KEY_UP) {
+		lookAt.ey = lookAt.ey + 0.01;
+	} else if (key == GLUT_KEY_DOWN) {
+		lookAt.ey = lookAt.ey - 0.01;
+	} else if (key == GLUT_KEY_F1) {
+		lookAt.ez = lookAt.ez - 0.01;
+	} else if (key == GLUT_KEY_F2) {
+		lookAt.ez = lookAt.ez + 0.01;
+	}
+	cout << "lookAt{" << lookAt.ex << "," << lookAt.ey << "," << lookAt.ez
+			<< "}" << endl;
+	glutPostRedisplay();
+}
+
+void init() {
+	glEnable(GL_DEPTH_TEST);
+	// Uncomment out the first block of code below, and then the second block,
+	//  to see how they affect line and point drawing.
+
+	// The following commands should cause points and line to be drawn larger
+	// than a single pixel width.
+	glPointSize(8);
+	glLineWidth(5);
+
+	// The following commands should induce OpenGL to create round points and
+	// antialias points and lines.  (This is implementation dependent unfortunately).
+	//RGBA mode antialias need cooperate with blend function.
+	glEnable(GL_POINT_SMOOTH);
+	glEnable(GL_LINE_SMOOTH);
+	glEnable(GL_POLYGON_SMOOTH);
+	glHint(GL_POINT_SMOOTH_HINT, GL_NICEST); // Make round points, not square points
+	glHint(GL_LINE_SMOOTH_HINT, GL_NICEST); // Antialias the lines
+	glHint(GL_POLYGON_SMOOTH, GL_NICEST); // Antialias the lines
+	glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 }
 
 //--------main-----------
 int main(int argc, char** argv) {
 	glutInit(&argc, argv); // Initialize the toolkit
-	glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE | GLUT_DEPTH); // Set display mode
+	glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB | GLUT_DEPTH);
 	glutInitWindowPosition((glutGet(GLUT_SCREEN_WIDTH) - screenWidth) / 2,
 			(glutGet(GLUT_SCREEN_HEIGHT) - screenHeight) / 2); // Set window pozition on screen
 	glutInitWindowSize(screenWidth, screenHeight); // Set window size
 	glutCreateWindow("My OpenGL Porgram"); // Open the screen window
+	glutSpecialFunc(keyPressed);
 	glutReshapeFunc(windowResize);
 	glutDisplayFunc(draw); // Register redraw function
-	//init();
+	init();
 	glutMainLoop(); // Go into a perpetual loop
-//在上面的 dotPlot（）中的for循环里做一些更改就可以画另一个函数图了
 }
