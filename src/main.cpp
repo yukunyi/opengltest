@@ -36,8 +36,8 @@ void draw3DRect(Gl3DRect rect) {
 	glBegin(GL_POLYGON);
 	glVertex3fv(rect.facadeTopLeft);
 	glVertex3fv(rect.facadeTopRight);
-	glVertex3fv(rect.facadeBottomLeft);
 	glVertex3fv(rect.facadeBottomRight);
+	glVertex3fv(rect.facadeBottomLeft);
 	glEnd();
 
 	//绘制第二面（后面）
@@ -46,26 +46,26 @@ void draw3DRect(Gl3DRect rect) {
 	glBegin(GL_POLYGON);
 	glVertex3fv(rect.backFacadeTopLeft);
 	glVertex3fv(rect.backFacadeTopRight);
-	glVertex3fv(rect.backFacadeBottomLeft);
 	glVertex3fv(rect.backFacadeBottomRight);
+	glVertex3fv(rect.backFacadeBottomLeft);
 	glEnd();
 
 	//绘制第三面（上面）
 	glColor3f(rect.topColor[0], rect.topColor[1], rect.topColor[2]);
 	glBegin(GL_POLYGON);
-	glVertex3fv(rect.facadeTopLeft);
-	glVertex3fv(rect.facadeTopRight);
 	glVertex3fv(rect.backFacadeTopLeft);
 	glVertex3fv(rect.backFacadeTopRight);
+	glVertex3fv(rect.facadeTopRight);
+	glVertex3fv(rect.facadeTopLeft);
 	glEnd();
 
 	//绘制第四面（下面）
 	glColor3f(rect.bottomColor[0], rect.bottomColor[1], rect.bottomColor[2]);
 	glBegin(GL_POLYGON);
-	glVertex3fv(rect.facadeBottomLeft);
-	glVertex3fv(rect.facadeBottomRight);
 	glVertex3fv(rect.backFacadeBottomLeft);
 	glVertex3fv(rect.backFacadeBottomRight);
+	glVertex3fv(rect.facadeBottomRight);
+	glVertex3fv(rect.facadeBottomLeft);
 	glEnd();
 
 	//绘制第五面（左面）
@@ -73,8 +73,8 @@ void draw3DRect(Gl3DRect rect) {
 	glBegin(GL_POLYGON);
 	glVertex3fv(rect.facadeTopLeft);
 	glVertex3fv(rect.facadeBottomLeft);
-	glVertex3fv(rect.backFacadeTopLeft);
 	glVertex3fv(rect.backFacadeBottomLeft);
+	glVertex3fv(rect.backFacadeTopLeft);
 	glEnd();
 
 	//绘制第六面（右面）
@@ -82,8 +82,8 @@ void draw3DRect(Gl3DRect rect) {
 	glBegin(GL_POLYGON);
 	glVertex3fv(rect.facadeTopRight);
 	glVertex3fv(rect.facadeBottomRight);
-	glVertex3fv(rect.backFacadeTopRight);
 	glVertex3fv(rect.backFacadeBottomRight);
+	glVertex3fv(rect.backFacadeTopRight);
 	glEnd();
 }
 
@@ -93,6 +93,7 @@ Gl3DRect create3DRectPoints(GLfloat startPoint[3], GLfloat xLength,
 	rect.backFacadeBottomLeft[0] = startPoint[0];
 	rect.backFacadeBottomLeft[1] = startPoint[1];
 	rect.backFacadeBottomLeft[2] = startPoint[2];
+
 	rect.backFacadeBottomRight[0] = startPoint[0] + xLength;
 	rect.backFacadeBottomRight[1] = startPoint[1];
 	rect.backFacadeBottomRight[2] = startPoint[2];
@@ -100,6 +101,7 @@ Gl3DRect create3DRectPoints(GLfloat startPoint[3], GLfloat xLength,
 	rect.backFacadeTopLeft[0] = startPoint[0];
 	rect.backFacadeTopLeft[1] = startPoint[1] + yLength;
 	rect.backFacadeTopLeft[2] = startPoint[2];
+
 	rect.backFacadeTopRight[0] = startPoint[0] + xLength;
 	rect.backFacadeTopRight[1] = startPoint[1] + yLength;
 	rect.backFacadeTopRight[2] = startPoint[2];
@@ -107,6 +109,7 @@ Gl3DRect create3DRectPoints(GLfloat startPoint[3], GLfloat xLength,
 	rect.facadeBottomLeft[0] = startPoint[0];
 	rect.facadeBottomLeft[1] = startPoint[1];
 	rect.facadeBottomLeft[2] = startPoint[2] + zLength;
+
 	rect.facadeBottomRight[0] = startPoint[0] + xLength;
 	rect.facadeBottomRight[1] = startPoint[1];
 	rect.facadeBottomRight[2] = startPoint[2] + zLength;
@@ -114,6 +117,7 @@ Gl3DRect create3DRectPoints(GLfloat startPoint[3], GLfloat xLength,
 	rect.facadeTopLeft[0] = startPoint[0];
 	rect.facadeTopLeft[1] = startPoint[1] + yLength;
 	rect.facadeTopLeft[2] = startPoint[2] + zLength;
+
 	rect.facadeTopRight[0] = startPoint[0] + xLength;
 	rect.facadeTopRight[1] = startPoint[1] + yLength;
 	rect.facadeTopRight[2] = startPoint[2] + zLength;
@@ -125,23 +129,40 @@ void draw(void) {
 	cout << "draw" << endl;
 	glClearColor(0.0, 0.0, 0.0, 0.0);
 	glClear(GL_COLOR_BUFFER_BIT);
-	gluLookAt(0.1, 0.1, 10.0, 0.5, 0.5, 0.0, 2.0, 1.0, 0.0);
 	Gl3DRect rect = create3DRectPoints(new GLfloat[3] { 0.0, 0.0, 0.0 }, 0.2,
 			0.2, 0.2);
-	rect.facadeColor[0] = 0.5f;
-	rect.facadeColor[1] = 0.5f;
-	rect.facadeColor[2] = 0.5f;
+	rect.facadeColor[0] = 0.58f;
+	rect.facadeColor[1] = 0.16f;
+	rect.facadeColor[2] = 0.84f;
+
+	rect.backFacadeColor[0] = 1.98f;
+	rect.backFacadeColor[1] = 0.2f;
+	rect.backFacadeColor[2] = 0.5f;
+
+	rect.leftColor[0] = 0.1f;
+	rect.leftColor[1] = 0.9f;
+	rect.leftColor[2] = 0.56f;
+
+	rect.rightColor[0] = 0.1f;
+	rect.rightColor[1] = 0.9f;
+	rect.rightColor[2] = 0.56f;
+
+	rect.topColor[0] = 0.1f;
+	rect.topColor[1] = 0.2f;
+	rect.topColor[2] = 0.56f;
 	draw3DRect(rect);
 	glutSwapBuffers();
 }
 
-void init() {
-	glViewport(0, 0, screenWidth, screenWidth);
+void init(int width, int height) {
+	glViewport(0, 0, width, height);
+	gluPerspective(45.0, width / height, 1.0, 0.0);
+	gluLookAt(0.4, 0.4, 0.4, 0.2, 0.2, 0.2, 0.0, 0.2, 0.0);
 }
 
 void windowResize(int width, int height) {
 	cout << "event{window resize:" << width << "x" << height << "}" << endl;
-	glViewport(0, 0, width, height);
+	init(width, height);
 }
 
 //--------main-----------
@@ -154,7 +175,7 @@ int main(int argc, char** argv) {
 	glutCreateWindow("My OpenGL Porgram"); // Open the screen window
 	glutReshapeFunc(windowResize);
 	glutDisplayFunc(draw); // Register redraw function
-	init();
+	//init();
 	glutMainLoop(); // Go into a perpetual loop
 //在上面的 dotPlot（）中的for循环里做一些更改就可以画另一个函数图了
 }
