@@ -159,7 +159,7 @@ void drawPointRect(GLfloat color[]) {
 void draw(void) {
 	glLoadIdentity();
 	glMatrixMode(GL_MODELVIEW);
-	gluPerspective(0.0, 1.0, 0.0, 1.0);
+	gluPerspective(0.0, 1.0, 0.1, 0.2);
 	gluLookAt(lookAt.ex, lookAt.ey, lookAt.ez, lookAt.cx, lookAt.cy, lookAt.cz,
 			lookAt.ux, lookAt.uy, lookAt.uz);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
